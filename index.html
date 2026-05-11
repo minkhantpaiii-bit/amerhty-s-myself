@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ameryth | Min Khant Paing — Portfolio</title>
+    <style>
+        :root {
+            --bg: #050510;
+            --surface: #0a0a1a;
+            --surface2: #0f0f22;
+            --cyan: #00e5ff;
+            --magenta: #e040fb;
+            --purple: #7c4dff;
+            --gold: #ffb74d;
+            --white: #e0e0e0;
+            --text: #c8c8d4;
+            --text2: #9090a8;
+            --border: #1a1a35;
+            --glow-cyan: 0 0 30px rgba(0, 229, 255, 0.5);
+            --glow-magenta: 0 0 30px rgba(224, 64, 251, 0.5);
+            --glow-purple: 0 0 30px rgba(124, 77, 255, 0.5);
+            --radius: 20px;
+            --radius-sm: 12px;
+            --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #7c4dff #050510;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050510;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #7c4dff;
+            border-radius: 10px;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            cursor: default;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 10px;
+            height: 10px;
+            border: 2px solid var(--cyan);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease, border-color 0.3s;
+            mix-blend-mode: difference;
+        }
+        .cursor-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--cyan);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.05s ease;
+        }
+        .cursor.hover {
+            transform: scale(2.5);
+            border-color: var(--magenta);
+            mix-blend-mode: normal;
+            background: rgba(224, 64, 251, 0.2);
+            border-width: 1px;
+        }
+
+        /* Canvas Background */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(10, 10, 26, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 10px 28px;
+            display: flex;
+            gap: 28px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            transition: var(--transition);
+        }
+        nav.scrolled {
+            background: rgba(10, 10, 26, 0.9);
+            box-shadow: 0 12px 50px rgba(124, 77, 255, 0.2);
+            border-color: #7c4dff44;
+        }
+        nav a {
+            color: var(--text2);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            position: relative;
+            padding: 6px 2px;
+        }
+        nav a:hover,
+        nav a.active {
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 100%;
+            height: 2px;
+            background: var(--cyan);
+            border-radius: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 10px var(--cyan);
+        }
+        nav a:hover::after,
+        nav a.active::after {
+            transform: translateX(-50%) scaleX(1);
+        }
+
+        /* Section Spacing */
+        section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-inner {
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        /* ---------- HERO ---------- */
+        #hero {
+            text-align: center;
+            flex-direction: column;
+        }
+        .hero-avatar-wrap {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+        .hero-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cyan), var(--magenta), var(--purple));
+            padding: 4px;
+            box-shadow: 0 0 60px rgba(124, 77, 255, 0.5), 0 0 120px rgba(0, 229, 255, 0.25);
+            animation: avatarPulse 4s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+        }
+        @keyframes avatarPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 60px rgba(124, 77, 255, 0.5), 0 0 120px rgba(0, 229, 255, 0.25);
+            }
+            50% {
+                box-shadow: 0 0 90px rgba(224, 64, 251, 0.7), 0 0 160px rgba(0, 229, 255, 0.4);
+            }
+        }
+        .hero-avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--surface2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--white);
+            text-shadow: 0 0 30px var(--cyan);
+            overflow: hidden;
+            background-image: radial-gradient(circle at 30% 30%, #1a1a40, #0a0a1a);
+        }
+        .hero-avatar-ring {
+            position: absolute;
+            inset: -20px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: var(--cyan);
+            border-right-color: var(--magenta);
+            animation: ringSpin 6s linear infinite;
+            z-index: 1;
+        }
+        @keyframes ringSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .hero-avatar-ring2 {
+            position: absolute;
+            inset: -35px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-bottom-color: var(--purple);
+            border-left-color: var(--gold);
+            animation: ringSpin 10s linear infinite reverse;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 900;
+            letter-spacing: -1px;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--white) 0%, var(--cyan) 50%, var(--magenta) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            animation: textShimmer 5s ease-in-out infinite;
+            background-size: 200% 200%;
+        }
+        @keyframes textShimmer {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text2);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .hero-tagline {
+            font-size: 1rem;
+            color: var(--text2);
+            max-width: 500px;
+            margin: 0 auto 30px;
+            animation: fadeInUp 1s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .btn-glow {
+            display: inline-block;
+            padding: 14px 36px;
+            border-radius: 50px;
+            background: transparent;
+            border: 2px solid var(--cyan);
+            color: var(--cyan);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            text-decoration: none;
+            font-size: 0.9rem;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+        }
+        .btn-glow:hover {
+            background: var(--cyan);
+            color: #000;
+            box-shadow: 0 0 50px rgba(0, 229, 255, 0.6), 0 0 100px rgba(0, 229, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        .btn-glow.magenta {
+            border-color: var(--magenta);
+            color: var(--magenta);
+            box-shadow: 0 0 20px rgba(224, 64, 251, 0.2);
+            margin-left: 12px;
+        }
+        .btn-glow.magenta:hover {
+            background: var(--magenta);
+            color: #000;
+            box-shadow: 0 0 50px rgba(224, 64, 251, 0.6), 0 0 100px rgba(224, 64, 251, 0.3);
+        }
+
+        /* ---------- SECTION HEADERS ---------- */
+        .section-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--cyan);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .section-title {
+            font-size: clamp(2.2rem, 4vw, 3.2rem);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 40px;
+            color: var(--white);
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--magenta);
+            border-radius: 3px;
+            box-shadow: 0 0 15px var(--magenta);
+        }
+
+        /* ---------- GLASS CARDS ---------- */
+        .glass-card {
+            background: rgba(15, 15, 34, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-card:hover {
+            border-color: #7c4dff55;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(124, 77, 255, 0.15);
+            transform: translateY(-4px);
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+
+        /* ---------- SKILL BARS ---------- */
+        .skill-item {
+            margin-bottom: 20px;
+        }
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        .skill-bar {
+            height: 6px;
+            background: #1a1a35;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .skill-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--cyan), var(--purple), var(--magenta));
+            background-size: 200% 100%;
+            animation: skillGlow 3s ease-in-out infinite;
+            transition: width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+            position: relative;
+        }
+        @keyframes skillGlow {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* ---------- TIMELINE ---------- */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--cyan), var(--magenta), var(--purple));
+            border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 25px;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -26px;
+            top: 5px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 20px var(--cyan);
+            z-index: 2;
+            transition: var(--transition);
+        }
+        .timeline-item:hover .timeline-dot {
+            transform: scale(1.5);
+            box-shadow: 0 0 30px var(--magenta);
+            background: var(--magenta);
+        }
+        .timeline-date {
+            font-size: 0.8rem;
+            color: var(--cyan);
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        .timeline-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--white);
+        }
+        .timeline-desc {
+            color: var(--text2);
+            font-size: 0.9rem;
+        }
+
+        /* ---------- GRID LAYOUT ---------- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* ---------- DJ SECTION ---------- */
+        .dj-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(224, 64, 251, 0.1);
+            border: 1px solid rgba(224, 64, 251, 0.3);
+            border-radius: 50px;
+            padding: 10px 22px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--magenta);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 15px rgba(224, 64, 251, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(224, 64, 251, 0.6);
+            }
+        }
+        .equalizer {
+            display: flex;
+            gap: 4px;
+            align-items: flex-end;
+            height: 40px;
+        }
+        .eq-bar {
+            width: 6px;
+            border-radius: 3px;
+            background: var(--cyan);
+            animation: eqBounce 1s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        }
+        .eq-bar:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .eq-bar:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        .eq-bar:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        .eq-bar:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+        .eq-bar:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+        @keyframes eqBounce {
+            0%,
+            100% {
+                height: 10px;
+            }
+            50% {
+                height: 35px;
+            }
+        }
+
+        /* ---------- TECH SPEC CARD ---------- */
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        .spec-item {
+            background: rgba(10, 10, 26, 0.7);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .spec-item:hover {
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+        }
+        .spec-val {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--cyan);
+        }
+        .spec-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text2);
+        }
+
+        /* ---------- FOOTER ---------- */
+        footer {
+            text-align: center;
+            padding: 50px;
+            color: var(--text2);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+        footer .heart {
+            color: var(--magenta);
+            animation: heartBeat 1s infinite;
+            display: inline-block;
+        }
+        @keyframes heartBeat {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+            }
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 768px) {
+            nav {
+                gap: 14px;
+                padding: 10px 18px;
+                top: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            nav a {
+                font-size: 0.75rem;
+            }
+            section {
+                padding: 80px 20px;
+            }
+            .hero-avatar {
+                width: 100px;
+                height: 100px;
+            }
+            .hero-avatar-ring {
+                inset: -14px;
+            }
+            .hero-avatar-ring2 {
+                inset: -24px;
+            }
+            .btn-glow.magenta {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            .timeline {
+                padding-left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor" id="cursor"></div>
+
+    <!-- Particle Canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Main Content -->
+    <div class="main-container">
+
+        <!-- Navigation -->
+        <nav id="navbar">
+            <a href="#hero" class="active">Home</a>
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#experience">Experience</a>
+            <a href="#dj">DJ</a>
+            <a href="#tech">Tech</a>
+            <a href="#contact">Contact</a>
+        </nav>
+
+        <!-- HERO -->
+        <section id="hero">
+            <div class="hero-avatar-wrap">
+                <div class="hero-avatar-ring"></div>
+                <div class="hero-avatar-ring2"></div>
+                <div class="hero-avatar">
+                    <div class="hero-avatar-inner">A</div>
+                </div>
+            </div>
+            <h1 class="hero-title">Min Khant Paing</h1>
+            <p class="hero-subtitle">Ameryth</p>
+            <p class="hero-tagline">
+                IT Professional • Web Developer • UI Designer • DJ • Tech Enthusiast
+            </p>
+            <div>
+                <a href="#about" class="btn-glow">Explore My Work</a>
+                <a href="#contact" class="btn-glow magenta">Get In Touch</a>
+            </div>
+            <!-- Scroll indicator -->
+            <div style="margin-top:60px; animation: fadeInUp 1.5s ease-out;">
+                <svg width="30" height="50" viewBox="0 0 30 50" style="opacity:0.5;">
+                    <rect x="13" y="5" width="4" height="25" rx="2" fill="none" stroke="#9090a8" stroke-width="1.5">
+                        <animate attributeName="y" values="5;20;5" dur="2s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                </svg>
+            </div>
+        </section>
+
+        <!-- ABOUT -->
+        <section id="about">
+            <div class="section-inner">
+                <p class="section-label">About Me</p>
+                <h2 class="section-title">Who I Am</h2>
+                <div class="grid-2">
+                    <div class="glass-card" style="--mx:30%;--my:40%;">
+                        <p style="font-size:1.1rem; color:var(--white); font-weight:500; margin-bottom:15px;">
+                            👋 Hey, I'm <span style="color:var(--cyan);">Min Khant Paing</span> — but you can call me <span style="color:var(--magenta);">Ameryth</span>.
+                        </p>
+                        <p style="color:var(--text2);">
+                            I'm a highly motivated IT professional currently taking a temporary leave from my first year at
+                            <strong>Siam University</strong> to gain real-world experience. I value honesty, responsibility, and
+                            hard work above all. My background spans DJing, computer hardware & software, web development,
+                            and UI design — all converging into my passion for building exceptional web applications.
+                        </p>
+                    </div>
+                    <div class="glass-card" style="--mx:70%;--my:60%;">
+                        <p style="font-weight:600; color:var(--white); margin-bottom:12px;">📚 Education</p>
+                        <div style="margin-bottom:15px;">
+                            <span style="color:var(--cyan); font-weight:600;">2025 – 2026</span><br>
+                            <span>Siam University — Information Technology</span>
+                        </div>
+                        <div>
+                            <span style="color:var(--cyan); font-weight:600;">2023 – 2025</span><br>
+                            <span>Miba University — Information Technology</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-3" style="margin-top:24px;">
+                    <div class="glass-card" style="text-align:center; --mx:50%;--my:30%;">
+                        <span style="font-size:2.5rem;">🎯</span>
+                        <p style="font-weight:700; color:var(--white);">Responsible & Persistent</p>
+                        <p style="font-size:0.85rem; color:var(--text2);">I see every task through to completion — no project left halfway.</p>
+                    </div>
+                    <div class="glass-card" style="text-align:center; --mx:50%;--my:30%;">
+                        <span style="font-size:2.5rem;">⚡</span>
+                        <p style="font-weight:700; color:var(--white);">Quick Learner</p>
+                        <p style="font-size:0.85rem; color:var(--text2);">Highly adaptable to new software, tools, and workflows.</p>
+                    </div>
+                    <div class="glass-card" style="text-align:center; --mx:50%;--my:30%;">
+                        <span style="font-size:2.5rem;">💡</span>
+                        <p style="font-weight:700; color:var(--white);">Positive Attitude</p>
+                        <p style="font-size:0.85rem; color:var(--text2);">Energetic, proactive, and ready to lift any team.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SKILLS -->
+        <section id="skills">
+            <div class="section-inner">
+                <p class="section-label">My Arsenal</p>
+                <h2 class="section-title">Skills & Expertise</h2>
+                <div class="grid-2">
+                    <div class="glass-card" style="--mx:20%;--my:50%;">
+                        <p style="font-weight:700; color:var(--white); margin-bottom:20px;">🖥️ Technical Skills</p>
+                        <div class="skill-item">
+                            <div class="skill-header"><span>Web Development</span><span>85%</span></div>
+                            <div class="skill-bar"><div class="skill-fill" style="width:85%;"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header"><span>UI/UX Design</span><span>78%</span></div>
+                            <div class="skill-bar"><div class="skill-fill" style="width:78%;"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header"><span>Computer Hardware</span><span>92%</span></div>
+                            <div class="skill-bar"><div class="skill-fill" style="width:92%;"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header"><span>MS Office Suite</span><span>88%</span></div>
+                            <div class="skill-bar"><div class="skill-fill" style="width:88%;"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header"><span>AI & Automation</span><span>70%</span></div>
+                            <div class="skill-bar"><div class="skill-fill" style="width:70%;"></div></div>
+                        </div>
+                    </div>
+                    <div class="glass-card" style="--mx:80%;--my:40%;">
+                        <p style="font-weight:700; color:var(--white); margin-bottom:20px;">🎧 Creative & Other</p>
+                        <div class="skill-item">
+                            <div class="skill-header"><span>DJing</span><span>80%</span></div>
+                            <div class="skill-bar"><div class="skill-fill" style="width:80%;"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header"><span>Web Platform Management</span><span>82%</span></div>
+                            <div class="skill-bar"><div class="skill-fill" style="width:82%;"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header"><span>Problem Solving</span><span>90%</span></div>
+                            <div class="skill-bar"><div class="skill-fill" style="width:90%;"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header"><span>Adaptability</span><span>95%</span></div>
+                            <div class="skill-bar"><div class="skill-fill" style="width:95%;"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-header"><span>Multi-tasking</span><span>87%</span></div>
+                            <div class="skill-bar"><div class="skill-fill" style="width:87%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPERIENCE -->
+        <section id="experience">
+            <div class="section-inner">
+                <p class="section-label">Work History</p>
+                <h2 class="section-title">Experience</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <span class="timeline-date">2022 – 2023</span>
+                        <p class="timeline-title">Automotive Technician (Intern/Trainee)</p>
+                        <p class="timeline-desc">Performed diagnostics and repairs on vehicle mechanical systems. Developed hands-on troubleshooting skills and attention to detail.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <span class="timeline-date">2021 – 2022</span>
+                        <p class="timeline-title">Mill Operator</p>
+                        <p class="timeline-desc">Monitored and maintained milling machinery, ensuring high-quality output and minimal downtime. Built a strong work ethic in a demanding environment.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <span class="timeline-date">Ongoing</span>
+                        <p class="timeline-title">DJ & Creative Projects</p>
+                        <p class="timeline-desc">Performing and honing DJ skills alongside tech pursuits. Blending creativity with technical precision.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DJ SECTION -->
+        <section id="dj">
+            <div class="section-inner" style="text-align:center;">
+                <p class="section-label">Beyond Tech</p>
+                <h2 class="section-title" style="display:inline-block;">Become A Legendary DJ</h2>
+                <div style="margin: 30px 0;">
+                    <div class="dj-badge">
+                        <div class="equalizer">
+                            <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+                        </div>
+                        UBL • LEGENDARY DJ
+                        <div class="equalizer">
+                            <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                <p style="color:var(--text2); max-width:600px; margin:0 auto 20px;">
+                    Music is my second language. DJing isn't just a hobby — it's a craft I'm constantly refining.
+                    From reading crowds to seamless transitions, I bring the same precision and passion to the decks
+                    that I bring to code.
+                </p>
+                <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+                    <span style="background:rgba(0,229,255,0.1); padding:8px 18px; border-radius:20px; color:var(--cyan); font-weight:500;">🎵 Mixing</span>
+                    <span style="background:rgba(224,64,251,0.1); padding:8px 18px; border-radius:20px; color:var(--magenta); font-weight:500;">🎚️ Beatmatching</span>
+                    <span style="background:rgba(124,77,255,0.1); padding:8px 18px; border-radius:20px; color:var(--purple); font-weight:500;">🎧 Crowd Reading</span>
+                    <span style="background:rgba(255,183,77,0.1); padding:8px 18px; border-radius:20px; color:var(--gold); font-weight:500;">✨ Performance</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- TECH SETUP -->
+        <section id="tech">
+            <div class="section-inner">
+                <p class="section-label">My Rig</p>
+                <h2 class="section-title">Tech Setup</h2>
+                <div class="grid-2">
+                    <div class="glass-card" style="--mx:40%;--my:35%;">
+                        <p style="font-weight:700; color:var(--white); margin-bottom:16px;">🖥️ HUAWEI Desktop Workstation</p>
+                        <div class="spec-grid">
+                            <div class="spec-item"><span class="spec-val">Intel i7-10700F</span><span class="spec-label">Processor</span></div>
+                            <div class="spec-item"><span class="spec-val">32GB DDR4</span><span class="spec-label">RAM</span></div>
+                            <div class="spec-item"><span class="spec-val">RTX 4070 Ti</span><span class="spec-label">GPU</span></div>
+                            <div class="spec-item"><span class="spec-val">512GB SSD</span><span class="spec-label">Storage</span></div>
+                            <div class="spec-item"><span class="spec-val">27" FHD IPS</span><span class="spec-label">Display</span></div>
+                            <div class="spec-item"><span class="spec-val">Windows 11 Pro</span><span class="spec-label">OS</span></div>
+                            <div class="spec-item"><span class="spec-val">Wi-Fi 6E</span><span class="spec-label">Wireless</span></div>
+                            <div class="spec-item"><span class="spec-val">Thunderbolt 4</span><span class="spec-label">Ports</span></div>
+                        </div>
+                        <p style="margin-top:12px; font-size:0.8rem; color:var(--text2);">Python 3.9.13 • PyCharm Community Edition</p>
+                    </div>
+                    <div class="glass-card" style="--mx:60%;--my:55%;">
+                        <p style="font-weight:700; color:var(--white); margin-bottom:16px;">📱 HUAWEI Mate40 Pro</p>
+                        <div class="spec-grid">
+                            <div class="spec-item"><span class="spec-val">6.7" AMOLED</span><span class="spec-label">Display</span></div>
+                            <div class="spec-item"><span class="spec-val">5000mAh</span><span class="spec-label">Battery</span></div>
+                            <div class="spec-item"><span class="spec-val">50MP</span><span class="spec-label">Front Camera</span></div>
+                            <div class="spec-item"><span class="spec-val">6GB RAM</span><span class="spec-label">Memory</span></div>
+                            <div class="spec-item"><span class="spec-val">128/256GB</span><span class="spec-label">Storage</span></div>
+                            <div class="spec-item"><span class="spec-val">100W</span><span class="spec-label">Fast Charging</span></div>
+                            <div class="spec-item"><span class="spec-val">IP68</span><span class="spec-label">Waterproof</span></div>
+                            <div class="spec-item"><span class="spec-val">Android 11</span><span class="spec-label">OS</span></div>
+                        </div>
+                        <p style="margin-top:12px; font-size:0.8rem; color:var(--text2);">AI Camera • 5G • Fingerprint Sensor</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact">
+            <div class="section-inner" style="text-align:center;">
+                <p class="section-label">Let's Connect</p>
+                <h2 class="section-title" style="display:inline-block;">Get In Touch</h2>
+                <p style="color:var(--text2); max-width:500px; margin:0 auto 30px;">
+                    I'm always open to new opportunities, collaborations, or just a friendly chat.
+                    Reach out and let's create something amazing together.
+                </p>
+                <div class="glass-card" style="max-width:500px; margin:0 auto; --mx:50%;--my:50%;">
+                    <p style="font-weight:600; color:var(--white);">📍 Based in Thailand</p>
+                    <p style="color:var(--text2);">Siam University • Information Technology</p>
+                    <p style="color:var(--cyan); font-weight:500;">Min Khant Paing (Ameryth)</p>
+                    <div style="margin-top:16px;">
+                        <a href="#" class="btn-glow" style="font-size:0.8rem; padding:10px 28px;">Send Message</a>
+                    </div>
+                </div>
+                <!-- Certificates Mention -->
+                <div style="margin-top:30px; padding:16px 24px; background:rgba(255,183,77,0.05); border:1px solid rgba(255,183,77,0.2); border-radius:30px; display:inline-block;">
+                    <span style="color:var(--gold); font-weight:500;">🏦 CET • China Southern Money Exchange • Shanghai Intl. Currency Center • Mandarin Oriental Hotel Group</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>© 2026 <span style="color:var(--cyan);">Min Khant Paing</span> — <span style="color:var(--magenta);">Ameryth</span></p>
+            <p>Built with <span class="heart">❤️</span> and a lot of code</p>
+            <p style="font-size:0.7rem; color:var(--text2);">IT • DJ • Web Dev • UI Design</p>
+        </footer>
+    </div>
+
+    <script>
+        // ===== PARTICLE CANVAS =====
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2.5 + 0.8;
+                this.speedX = (Math.random() - 0.5) * 0.45;
+                this.speedY = (Math.random() - 0.5) * 0.45;
+                this.opacity = Math.random() * 0.7 + 0.2;
+                this.hue = Math.random() < 0.33 ? 190 : Math.random() < 0.5 ? 280 : 260;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < -20 || this.x > canvas.width + 20 || this.y < -20 || this.y > canvas.height + 20) {
+                    this.reset();
+                    if (Math.random() < 0.5) this.x = Math.random() * canvas.width;
+                    else this.y = Math.random() * canvas.height;
+                }
+                // Mouse interaction
+                if (mouse.x !== null && mouse.y !== null) {
+                    const dx = this.x - mouse.x;
+                    const dy = this.y - mouse.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < mouse.radius) {
+                        const angle = Math.atan2(dy, dx);
+                        const force = (mouse.radius - dist) / mouse.radius;
+                        this.x += Math.cos(angle) * force * 2;
+                        this.y += Math.sin(angle) * force * 2;
+                    }
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 80%, 65%, ${this.opacity})`;
+                ctx.fill();
+                // Subtle glow
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 80%, 65%, ${this.opacity * 0.15})`;
+                ctx.fill();
+            }
+        }
+
+        function initParticles(count = 120) {
+            particles = [];
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles(130);
+
+        function drawConnections() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(124,77,255,${0.08 * (1 - dist / 100)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update();
+                p.draw(); });
+            drawConnections();
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        document.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+        document.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+        document.addEventListener('touchmove', (e) => {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        // ===== CUSTOM CURSOR =====
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursorDot');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            cursorDot.style.left = e.clientX + 'px';
+            cursorDot.style.top = e.clientY + 'px';
+        });
+        const hoverElements = document.querySelectorAll(
+            'a, button, .btn-glow, .glass-card, .spec-item, .dj-badge, .timeline-item');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // ===== NAV SCROLL EFFECT =====
+        const navbar = document.getElementById('navbar');
+        const navLinks = navbar.querySelectorAll('a');
+        const sections = document.querySelectorAll('section');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            // Active link
+            let current = '';
+            sections.forEach(section => {
+                const top = section.offsetTop - 200;
+                if (window.scrollY >= top) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // ===== GLASS CARD MOUSE TRACKING =====
+        const glassCards = document.querySelectorAll('.glass-card');
+        glassCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mx', x + '%');
+                card.style.setProperty('--my', y + '%');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.setProperty('--mx', '50%');
+                card.style.setProperty('--my', '50%');
+            });
+        });
+
+        // ===== SKILL BARS ANIMATION ON SCROLL =====
+        const skillFills = document.querySelectorAll('.skill-fill');
+        const observerOptions = { threshold: 0.5 };
+        const skillObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const fill = entry.target;
+                    const targetWidth = fill.style.width;
+                    fill.style.width = '0%';
+                    setTimeout(() => {
+                        fill.style.width = targetWidth;
+                    }, 100);
+                    skillObserver.unobserve(fill);
+                }
+            });
+        }, observerOptions);
+        skillFills.forEach(fill => skillObserver.observe(fill));
+
+        // ===== SMOOTH SCROLL FOR NAV =====
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // ===== PARALLAX ON MOUSE MOVE FOR HERO =====
+        const heroAvatar = document.querySelector('.hero-avatar-wrap');
+        document.addEventListener('mousemove', (e) => {
+            if (!heroAvatar) return;
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            heroAvatar.style.transform = `translate(${x}px, ${y}px)`;
+        });
+
+        console.log('%c✨ Ameryth Portfolio Ready %c🚀',
+            'color: #00e5ff; font-size: 1.5rem; font-weight: bold;',
+            'color: #e040fb; font-size: 1rem;');
+        console.log('%cMin Khant Paing %c| %cLegendary DJ %c| %cIT Professional',
+            'color: #fff;', 'color: #9090a8;', 'color: #e040fb;', 'color: #9090a8;', 'color: #00e5ff;');
+    </script>
+</body>
+</html>
